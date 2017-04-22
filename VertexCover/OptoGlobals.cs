@@ -174,6 +174,7 @@ return working;
         
             return ret;
         }
+        static ArrayList solutionStuff = new ArrayList(2);
 
         static public BitArray ParallelBruteForce(int start = 1)
         {
@@ -181,33 +182,45 @@ return working;
             WeirdCounter w = new WeirdCounter(n);
             BitArray ret = null;
             bool found = false;
+            solutionStuff = new ArrayList(2);
+            solutionStuff.Add(null);
+            solutionStuff.Add((Object)false);
+
                 while (!found && start < n)
                 {
                     for (ret = w.Init(start); w.Good(); ret = w.Next())
                     {
                         List<Thread> threadPool = new List<Thread>();
-                        ArrayList results = new ArrayList(chunksize);
                         
                        for(int i = 0; w.Good() && i < chunksize; ++i){
-                           results.Add(null);   
                            threadPool.Add(new Thread(
                                () =>
                                {
-                                   BitArray bits = w.Next();
-                                   lock (results)
+                                   BitArray bits, coverage;
+                                   lock (w)
                                    {
-                                       results.Add((Object)(new Tuple<BitArray, bool>(bits, CheckIfCover(w.Next()))));
+                                       bits = w.Next();
+                                   }
+                                   if (bits == null) return;
+                                   if(CheckIfCover(bits, out coverage))
+                                   {
+                                       lock (solutionStuff)
+                                       {
+                                           solutionStuff[0] = bits;
+                                           solutionStuff[1] = (Object)true;
+                                       }
+
                                    }
                                }));
-
                        }
                        foreach (Thread t in threadPool)    t.Start();
-                       while (threadPool.Any(t => t.IsAlive)) Thread.Sleep(100);
-                       foreach (Object a in results)
-                       {
-                           Tuple<BitArray, bool> res = a as Tuple<BitArray, bool>;
-                           if (res.Item2) return res.Item1;
-                       }
+                       while ((bool)solutionStuff[1] && threadPool.Any(t => t.IsAlive)) Thread.Sleep(100);
+                    if ((bool)solutionStuff[1])
+                    {
+                        foreach (Thread t in threadPool) t.Abort();
+                        return (BitArray)solutionStuff[0];
+                    }
+
 
             
                        

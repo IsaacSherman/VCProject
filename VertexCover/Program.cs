@@ -25,17 +25,18 @@ namespace EvoOptimization
                 BitArray BruteForceBits, ApproxBits;
                 //Brute Force
                 sw.Start();
-                BruteForceBits = OptoGlobals.BruteForce();
+                //BruteForceBits = OptoGlobals.BruteForce();
                 sw.Stop();
                 bfTimes.Add(sw.ElapsedMilliseconds);
-                sols.Add(BruteForceBits.SumBitArray());
+                //sols.Add(BruteForceBits.SumBitArray());
                 sw.Reset();
 
                 //Parallel Brute Force
                 sw.Start();
-                //OptoGlobals.ParallelBruteForce();
+                    BruteForceBits = OptoGlobals.ParallelBruteForce();
                 sw.Stop();
-                bfpTimes.Add(sw.ElapsedMilliseconds);
+                    bfpTimes.Add(sw.ElapsedMilliseconds);
+                sols.Add(BruteForceBits.SumBitArray());
                 sw.Reset();
                 sw.Stop();
                 //Approximate
@@ -49,7 +50,7 @@ namespace EvoOptimization
                 //Evolutionary Algorithm
 
                 EvoOptimizerProgram<VertexOptimizer> P = new EvoOptimizerProgram<VertexOptimizer>();
-                P.MaxGen = 20*i;
+                P.MaxGen = 5*i;
                 P.MultiThread = true;
                 P.Noload = true;
                 P.OutputBaseline = false;
