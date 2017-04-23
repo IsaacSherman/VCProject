@@ -20,7 +20,7 @@ namespace EvoOptimization
             for (int i = 10; i < 41; ++i)
             {
                 sizes.Add(i);
-                string graphName = "../graph" + i + ".txt";
+                string graphName = "../../graphs/density=15/graph" + i + ".txt";
                 OptoGlobals.ReadGraph(graphName);
                 BitArray BruteForceBits, ApproxBits;
                 //Brute Force
@@ -125,7 +125,7 @@ namespace EvoOptimization
             {
                 line.Append(sizes[i] + ",");
             }
-            line.Remove(line.Length - 2, 1);
+            line.Remove(line.Length - 1, 1);
             return line;
         }
 
