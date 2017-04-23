@@ -20,23 +20,23 @@ namespace EvoOptimization
             for (int i = 10; i < 41; ++i)
             {
                 sizes.Add(i);
-                string graphName = "../../graphs/density=15/graph" + i + ".txt";
+                string graphName = "../../graphs/density=10/graph" + i + ".txt";
                 OptoGlobals.ReadGraph(graphName);
                 BitArray BruteForceBits, ApproxBits;
                 //Brute Force
                 sw.Start();
-                BruteForceBits = OptoGlobals.BruteForce();
+                //BruteForceBits = OptoGlobals.BruteForce();
                 sw.Stop();
                 bfTimes.Add(sw.ElapsedMilliseconds);
-                sols.Add(BruteForceBits.SumBitArray());
+                //sols.Add(BruteForceBits.SumBitArray());
                 sw.Reset();
 
                 //Parallel Brute Force
                 sw.Start();
-                BruteForceBits = OptoGlobals.ParallelBruteForce();
+                    BruteForceBits = OptoGlobals.ParallelBruteForce();
                 sw.Stop();
                     bfpTimes.Add(sw.ElapsedMilliseconds);
-                //sols.Add(BruteForceBits.SumBitArray());
+                sols.Add(BruteForceBits.SumBitArray());
                 sw.Reset();
                 sw.Stop();
                 //Approximate
@@ -125,7 +125,7 @@ namespace EvoOptimization
             {
                 line.Append(sizes[i] + ",");
             }
-            line.Remove(line.Length - 2, 1);
+            line.Remove(line.Length - 1, 1);
             return line;
         }
 
