@@ -17,15 +17,17 @@ namespace EvoOptimization
             List<int> sizes = new List<int>(), sols = new List<int>(), evoSols = new List<int>(), approxSols=new List<int>();
             List<double> bfTimes = new List<double>(), bfpTimes = new List<double>(), approxTimes = new List<double>(), evoTimes = new List<Double>();
             Stopwatch sw = new Stopwatch();
-            for (int i = 10; i < 41; ++i)
+            for (int i = 10; i < 51; ++i)
             {
                 sizes.Add(i);
-                string graphName = "../../graphs/density=10/graph" + i + ".txt";
+                string graphName = "../../graphs/density=5/graph" + i + ".txt";
+                if (!File.Exists(graphName)) break;
+                
                 OptoGlobals.ReadGraph(graphName);
                 BitArray BruteForceBits, ApproxBits;
                 //Brute Force
                 sw.Start();
-                //BruteForceBits = OptoGlobals.BruteForce();
+                BruteForceBits = OptoGlobals.BruteForce();
                 sw.Stop();
                 bfTimes.Add(sw.ElapsedMilliseconds);
                 //sols.Add(BruteForceBits.SumBitArray());
@@ -80,7 +82,7 @@ namespace EvoOptimization
                 fout.WriteLine(line.ToString());
                 line = writeLineToSB(evoTimes, "EvoAlg,");
                 fout.WriteLine(line.ToString());
-                line = writeLineToSB(sols, "Optimal Solution");
+                line = writeLineToSB(sols, "Optimal Solution,");
                 fout.WriteLine(line.ToString());
                 line = writeLineToSB(approxSols, "Approximate Solution,");
                 fout.WriteLine(line.ToString());
