@@ -22,7 +22,7 @@ namespace EvoOptimization
                 for (int i = 10; i < 41; ++i)
                 {
                     sizes.Add(i);
-                    string graphName = "../../graphs/density=sqrt(v)/graph" + i + ".txt";
+                    string graphName = "../../graphs/density=15/graph" + i + ".txt";
 
                     OptoGlobals.ReadGraph(graphName);
                     BitArray BruteForceBits, ApproxBits;
@@ -44,22 +44,28 @@ namespace EvoOptimization
                     sw.Stop();
                     //Approximate
                     sw.Start();
-                    //ApproxBits = OptoGlobals.Approximation();
+                    ApproxBits = OptoGlobals.Approximation();
                     sw.Stop();
-                    //approxSols.Add(ApproxBits.SumBitArray());
+                    approxSols.Add(ApproxBits.SumBitArray());
                     approxTimes.Add(sw.ElapsedMilliseconds);
                     sw.Reset();
 
                     //Evolutionary Algorithm
 
+                    VertexOptimizer brute = new VertexOptimizer();
+                    brute.SetBitsToString(BruteForceBits.BitsToString());
+                    brute.Eval();
                     EvoOptimizerProgram<VertexOptimizer> P = new EvoOptimizerProgram<VertexOptimizer>();
                     P.MaxGen = 5 * i;
                     P.MultiThread = true;
                     P.Noload = true;
                     P.OutputBaseline = false;
                     P.PopSize = 100;
+                    P.HasStopCondition = true;
+                    P.StopCondition = brute.Fitness;
                     P.SuppressMessages = true;
                     P.SaveAfterGens = 25;
+                    
                     P.ConfigureEvolver();
                     sw.Start();
                     P.Run();

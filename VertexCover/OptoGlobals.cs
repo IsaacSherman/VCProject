@@ -249,7 +249,7 @@ return working;
             return sets;
         }
 
-        /*
+        /* Austin Wyer and Elvis Offor's Vertex Cover Approximation
          * std::vector<int> graph::approximateVertexCover(){
             std::vector<int> cover;
             int* adjCopy = new int[numVert*numVert];
@@ -281,10 +281,10 @@ return working;
 
         public static BitArray Approximation()
         {
-            List<List<int>> adjPrime = new List<List<int>>(adjacency);
+            List<List<int>> adjPrime = new List<List<int>>(adjacency.Count);
+            foreach (List<int> a in adjacency) { adjPrime.Add(new List<int>(a)); }
             BitArray ret = new BitArray(n);
-            while (true)
-            {
+           
                 for (int i = 0; i < n; ++i)
                 {
                     if (adjPrime[i].Count != 0)
@@ -296,7 +296,7 @@ return working;
                     }
                 }
 
-            }
+            
 
             return ret;
         }

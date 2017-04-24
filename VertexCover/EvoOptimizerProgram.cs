@@ -7,7 +7,8 @@ namespace EvoOptimization
     class EvoOptimizerProgram<T> where T: Optimizer, new()
     {
         private int _maxGen,_popSize = 50, _saveAfterGens=10;
-        private bool _validate = false, _noload = false, _multiThread = false, _running = false, _outputBaseline = true, _suppressMessages = false;
+        private bool _validate = false, _noload = false, _multiThread = false, _running = false, _outputBaseline = true, _suppressMessages = false, _hasStopCondition = false;
+        private double _stopCondition = -1;
         
         private List<T> best;
 
@@ -16,6 +17,9 @@ namespace EvoOptimization
         private OptimoEvolver<T>.CrossoverType _crossOverType = OptimoEvolver<T>.CrossoverType.Uniform;
         private string _bestFilePath, _outputFileStem;
 
+        public bool HasStopCondition { get { return _hasStopCondition; } set { _hasStopCondition = value; } }
+
+        public double StopCondition { get { return _stopCondition; } set { _stopCondition = value; } }
         public int SaveAfterGens
         {
             get
@@ -284,7 +288,13 @@ namespace EvoOptimization
                     D.DumpLookupToFile(OutputFileStem);
                     if (SuppressMessages) blurt(msg);
                 }
+                if (HasStopCondition)
+                {
+                    if (D.Population[0].Fitness >= StopCondition) break;
+                }
+
                 sw.Reset();
+
             }
             D.DumpLookupToFile(OutputFileStem);
             OutputFileStem = null;
@@ -307,6 +317,7 @@ namespace EvoOptimization
         {
             D.AddToPopulation(p, PopSize - 2);
         }
+
 
     }
 }
