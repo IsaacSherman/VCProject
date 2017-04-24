@@ -271,8 +271,8 @@ return working;
                     if(adjCopy[j*numVert + k]){
                     adjCopy[j*numVert + k] = 0;
                     adjCopy[k*numVert + j] = 0;
+                    }   
                 }
-                    }
             }
         }
     }

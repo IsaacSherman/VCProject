@@ -75,7 +75,7 @@ namespace EvoOptimization
                     VertexOptimizer best = P.YieldBestOptimizer();
                     evoSols.Add(best.Bits.SumBitArray());
                     Console.WriteLine("Evolution yielded: " + best.Bits.BitsToString() + "\n And Brute Force yielded: "
-                        + BruteForceBits.BitsToString());// + "\n And an approximation yielded: " + ApproxBits.BitsToString());
+                        + BruteForceBits.BitsToString() + "\n And an approximation yielded: " + ApproxBits.BitsToString());
                 }
             }
             catch (OutOfMemoryException e)
@@ -96,7 +96,7 @@ namespace EvoOptimization
                     fout.WriteLine(line.ToString());
                     line = writeLineToSB(evoTimes, "EvoAlg,");
                     fout.WriteLine(line.ToString());
-                    line = writeLineToSB(sols, "Optimal Solution");
+                    line = writeLineToSB(sols, "Optimal Solution,");
                     fout.WriteLine(line.ToString());
                     line = writeLineToSB(approxSols, "Approximate Solution,");
                     fout.WriteLine(line.ToString());
