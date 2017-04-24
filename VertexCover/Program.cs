@@ -52,9 +52,11 @@ namespace EvoOptimization
 
                     //Evolutionary Algorithm
 
-                    VertexOptimizer brute = new VertexOptimizer();
+                    VertexOptimizer brute = new VertexOptimizer(), approx = new VertexOptimizer();
+                    approx.SetBitsToString(ApproxBits.BitsToString());
                     brute.SetBitsToString(BruteForceBits.BitsToString());
                     brute.Eval();
+                    
                     EvoOptimizerProgram<VertexOptimizer> P = new EvoOptimizerProgram<VertexOptimizer>();
                     P.MaxGen = 5 * i;
                     P.MultiThread = true;
@@ -65,8 +67,9 @@ namespace EvoOptimization
                     P.StopCondition = brute.Fitness;
                     P.SuppressMessages = true;
                     P.SaveAfterGens = 25;
-                    
+                  
                     P.ConfigureEvolver();
+                    P.AddToPopulation(approx);
                     sw.Start();
                     P.Run();
                     sw.Stop();

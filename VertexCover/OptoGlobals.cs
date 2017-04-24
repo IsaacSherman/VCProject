@@ -62,6 +62,7 @@ namespace EvoOptimization
             {
                 string line = fin.ReadLine();
                 n = Int32.Parse(line);
+                adjacency = new List<List<int>>(n);
                 for (i = 0; i < n; i++) adjacency.Add(new List<int>());
                 
                 while (!fin.EndOfStream)
@@ -281,23 +282,49 @@ return working;
 
         public static BitArray Approximation()
         {
-            List<List<int>> adjPrime = new List<List<int>>(adjacency.Count);
-            foreach (List<int> a in adjacency) { adjPrime.Add(new List<int>(a)); }
-            BitArray ret = new BitArray(n);
-           
+            List<List<int>> adjCopy = new List<List<int>>(adjacency.Count);
+            foreach (List<int> a in adjacency)
+            {
+                List<int> temp = new List<int>(n);
                 for (int i = 0; i < n; ++i)
                 {
-                    if (adjPrime[i].Count != 0)
+                    temp.Add(a.Contains(i) ? 1 : 0);
+                }
+                adjCopy.Add(temp);
+            }
+            int numVert = n;
+            BitArray ret = new BitArray(n);
+            for (int i = 0; i < numVert; i++)
+            {
+                for (int j = i + 1; j < numVert; j++)
+                {
+                    if (adjCopy[i][j] != 0)
                     {
-                        int target = adjPrime[i][0];
+                        ret[i] = ret[j] = true;
+                        for (int k = 0; k < numVert; k++)
+                            if (adjCopy[i][k] != 0)
+                                adjCopy[i][k] = adjCopy[k][i] = 0;
+                        for (int k = 0; k < numVert; k++)
+                            if (adjCopy[j][k] != 0)
+                                adjCopy[j][k] = adjCopy[k][j] = 0;
+                    }
+                }
+            }
+
+            
+           
+/*                for (int i = 0; i < n; ++i)
+                {
+                    if (adjCopy[i].Count != 0)
+                    {
+                        int target = adjCopy[i][0];
                         ret[i] = ret[target] = true;
-                        removeEdgesAdjacent(adjPrime, i);
-                        removeEdgesAdjacent(adjPrime, target);
+                        removeEdgesAdjacent(adjCopy, i);
                     }
                 }
 
             
-
+            */
             return ret;
         }
 
