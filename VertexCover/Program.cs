@@ -17,76 +17,87 @@ namespace EvoOptimization
             List<int> sizes = new List<int>(), sols = new List<int>(), evoSols = new List<int>(), approxSols=new List<int>();
             List<double> bfTimes = new List<double>(), bfpTimes = new List<double>(), approxTimes = new List<double>(), evoTimes = new List<Double>();
             Stopwatch sw = new Stopwatch();
-            for (int i = 10; i < 41; ++i)
+            try
             {
-                sizes.Add(i);
-                string graphName = "../../graphs/density=10/graph" + i + ".txt";
-                OptoGlobals.ReadGraph(graphName);
-                BitArray BruteForceBits, ApproxBits;
-                //Brute Force
-                sw.Start();
-                //BruteForceBits = OptoGlobals.BruteForce();
-                sw.Stop();
-                bfTimes.Add(sw.ElapsedMilliseconds);
-                //sols.Add(BruteForceBits.SumBitArray());
-                sw.Reset();
+                for (int i = 10; i < 41; ++i)
+                {
+                    sizes.Add(i);
+                    string graphName = "../../graphs/density=sqrt(v)/graph" + i + ".txt";
 
-                //Parallel Brute Force
-                sw.Start();
-                    BruteForceBits = OptoGlobals.ParallelBruteForce();
-                sw.Stop();
+                    OptoGlobals.ReadGraph(graphName);
+                    BitArray BruteForceBits, ApproxBits;
+                    //Brute Force
+                    sw.Start();
+                    BruteForceBits = OptoGlobals.BruteForce();
+                    sw.Stop();
+                    bfTimes.Add(sw.ElapsedMilliseconds);
+                    //sols.Add(BruteForceBits.SumBitArray());
+                    sw.Reset();
+
+                    //Parallel Brute Force
+                    sw.Start();
+                    //BruteForceBits = OptoGlobals.ParallelBruteForce();
+                    sw.Stop();
                     bfpTimes.Add(sw.ElapsedMilliseconds);
-                sols.Add(BruteForceBits.SumBitArray());
-                sw.Reset();
-                sw.Stop();
-                //Approximate
-                sw.Start();
-                //ApproxBits = OptoGlobals.Approximation();
-                sw.Stop();
-                //approxSols.Add(ApproxBits.SumBitArray());
-                approxTimes.Add(sw.ElapsedMilliseconds);
-                sw.Reset();
+                    sols.Add(BruteForceBits.SumBitArray());
+                    sw.Reset();
+                    sw.Stop();
+                    //Approximate
+                    sw.Start();
+                    //ApproxBits = OptoGlobals.Approximation();
+                    sw.Stop();
+                    //approxSols.Add(ApproxBits.SumBitArray());
+                    approxTimes.Add(sw.ElapsedMilliseconds);
+                    sw.Reset();
 
-                //Evolutionary Algorithm
+                    //Evolutionary Algorithm
 
-                EvoOptimizerProgram<VertexOptimizer> P = new EvoOptimizerProgram<VertexOptimizer>();
-                P.MaxGen = 5*i;
-                P.MultiThread = true;
-                P.Noload = true;
-                P.OutputBaseline = false;
-                P.PopSize = 100;
-                P.SuppressMessages = true;
-                P.SaveAfterGens = 25;
-                P.ConfigureEvolver();
-                sw.Start();
-                P.Run();
-                sw.Stop();
-                evoTimes.Add(sw.ElapsedMilliseconds);
+                    EvoOptimizerProgram<VertexOptimizer> P = new EvoOptimizerProgram<VertexOptimizer>();
+                    P.MaxGen = 5 * i;
+                    P.MultiThread = true;
+                    P.Noload = true;
+                    P.OutputBaseline = false;
+                    P.PopSize = 100;
+                    P.SuppressMessages = true;
+                    P.SaveAfterGens = 25;
+                    P.ConfigureEvolver();
+                    sw.Start();
+                    P.Run();
+                    sw.Stop();
+                    evoTimes.Add(sw.ElapsedMilliseconds);
 
-                VertexOptimizer best = P.YieldBestOptimizer();
-                evoSols.Add(best.Bits.SumBitArray());
-                Console.WriteLine("Evolution yielded: " + best.Bits.BitsToString() + "\n And Brute Force yielded: "
-                    + BruteForceBits.BitsToString());// + "\n And an approximation yielded: " + ApproxBits.BitsToString());
+                    VertexOptimizer best = P.YieldBestOptimizer();
+                    evoSols.Add(best.Bits.SumBitArray());
+                    Console.WriteLine("Evolution yielded: " + best.Bits.BitsToString() + "\n And Brute Force yielded: "
+                        + BruteForceBits.BitsToString());// + "\n And an approximation yielded: " + ApproxBits.BitsToString());
+                }
             }
+            catch (OutOfMemoryException e)
+            {
 
-            using (StreamWriter fout = new StreamWriter("results.csv")){
-                StringBuilder line = writeLineToSB(sizes, "Size,");
-                fout.WriteLine(line.ToString());
-                line = writeLineToSB(bfTimes, "Brute Force Serial,");
-                fout.WriteLine(line.ToString());
-                line = writeLineToSB(bfpTimes, "Brute Force Parallel,");
-                fout.WriteLine(line.ToString());
-                line = writeLineToSB(approxTimes, "Approximate,");
-                fout.WriteLine(line.ToString());
-                line = writeLineToSB(evoTimes, "EvoAlg,");
-                fout.WriteLine(line.ToString());
-                line = writeLineToSB(sols, "Optimal Solution");
-                fout.WriteLine(line.ToString());
-                line = writeLineToSB(approxSols, "Approximate Solution,");
-                fout.WriteLine(line.ToString());
-                line = writeLineToSB(evoSols, "EA Solution,");
-                fout.WriteLine(line.ToString());
+            }
+            finally
+            {
+                using (StreamWriter fout = new StreamWriter("results.csv"))
+                {
+                    StringBuilder line = writeLineToSB(sizes, "Size,");
+                    fout.WriteLine(line.ToString());
+                    line = writeLineToSB(bfTimes, "Brute Force Serial,");
+                    fout.WriteLine(line.ToString());
+                    line = writeLineToSB(bfpTimes, "Brute Force Parallel,");
+                    fout.WriteLine(line.ToString());
+                    line = writeLineToSB(approxTimes, "Approximate,");
+                    fout.WriteLine(line.ToString());
+                    line = writeLineToSB(evoTimes, "EvoAlg,");
+                    fout.WriteLine(line.ToString());
+                    line = writeLineToSB(sols, "Optimal Solution");
+                    fout.WriteLine(line.ToString());
+                    line = writeLineToSB(approxSols, "Approximate Solution,");
+                    fout.WriteLine(line.ToString());
+                    line = writeLineToSB(evoSols, "EA Solution,");
+                    fout.WriteLine(line.ToString());
 
+                }
             }
 /*                for (BitArray x = w.Init(7); w.Good(); x = w.Next())
                 {
@@ -114,7 +125,6 @@ namespace EvoOptimization
             }
 */
                 Console.ReadKey();
-            EvoOptimization.EvoOptimizer<VertexOptimizer> D = new EvoOptimization.EvoOptimizer<VertexOptimizer>();
 
         }
 
