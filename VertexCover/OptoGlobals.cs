@@ -324,6 +324,7 @@ return working;
                 if (vertexes[i]) foreach(int edge in adjacency[i]) covered[edge] = true; 
             }
             bool ret = true;
+            string coveredString=covered.BitsToString(), vertexesString=vertexes.BitsToString();
             foreach (bool vertex in covered) ret &= vertex;
             return ret;
                 
