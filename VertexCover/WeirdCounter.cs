@@ -4,13 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Collections;
 using MyUtils;
+using System.IO;
+
 namespace EvoOptimization
 {
     class WeirdCounter
     {
         public int Length{get;private set;}
         public int Sum { get; private set;}
-
             public WeirdCounter():this(OptoGlobals.n){}
     public WeirdCounter(int p)
     {
@@ -20,6 +21,7 @@ namespace EvoOptimization
     List<BitArray> results;
     public BitArray Init(int sum)
     {
+
         results = recurse(new BitArray(Length, false), sum);
         Sum = sum;
         return Next();

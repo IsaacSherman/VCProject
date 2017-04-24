@@ -249,7 +249,35 @@ return working;
             return sets;
         }
 
-        
+        /*
+         * std::vector<int> graph::approximateVertexCover(){
+            std::vector<int> cover;
+            int* adjCopy = new int[numVert*numVert];
+            memcpy(adjCopy,adjMat, sizeof(int)*numVert*numVert);
+            for(int i = 0; i < numVert; i++){
+                for(int j = i+1; j < numVert; j++){
+                    if(adjCopy[i*numVert + j]){
+                        cover.push_back(i);
+                        cover.push_back(j);
+
+                for(int k = 0; k < numVert; k++){
+                    if(adjCopy[i*numVert + k]){
+                        adjCopy[i*numVert + k] = 0;
+                        adjCopy[k*numVert + i] = 0;
+                    }
+                }
+
+                for(int k = 0; k < numVert; k++){
+                    if(adjCopy[j*numVert + k]){
+                    adjCopy[j*numVert + k] = 0;
+                    adjCopy[k*numVert + j] = 0;
+                }
+                    }
+            }
+        }
+    }
+    return cover;
+}*/
 
         public static BitArray Approximation()
         {
@@ -257,16 +285,17 @@ return working;
             BitArray ret = new BitArray(n);
             while (true)
             {
-                int remainingEdges = 0;
-                foreach (List<int> list in adjPrime) { remainingEdges += list.Count; }
-                if (remainingEdges == 0) { adjPrime = new List<List<int>>(adjacency); }
-                int u = RNG.Next(0, n);
-                if (adjPrime[u].Count == 0) continue;//Pick a new random
-                int v = adjPrime[u][RNG.Next(0, adjacency[u].Count)];
-                ret[u] = ret[v] = true;
-                removeEdgesAdjacent(adjPrime, u);
-                removeEdgesAdjacent(adjPrime, v);
-                if (CheckIfCover(ret)) break;
+                for (int i = 0; i < n; ++i)
+                {
+                    if (adjPrime[i].Count != 0)
+                    {
+                        int target = adjPrime[i][0];
+                        ret[i] = ret[target] = true;
+                        removeEdgesAdjacent(adjPrime, i);
+                        removeEdgesAdjacent(adjPrime, target);
+                    }
+                }
+
             }
 
             return ret;

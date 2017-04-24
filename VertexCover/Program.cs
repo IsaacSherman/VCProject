@@ -43,22 +43,28 @@ namespace EvoOptimization
                 sw.Stop();
                 //Approximate
                 sw.Start();
-                //ApproxBits = OptoGlobals.Approximation();
+                ApproxBits = OptoGlobals.Approximation();
                 sw.Stop();
-                //approxSols.Add(ApproxBits.SumBitArray());
+                approxSols.Add(ApproxBits.SumBitArray());
                 approxTimes.Add(sw.ElapsedMilliseconds);
                 sw.Reset();
 
                 //Evolutionary Algorithm
-
+                //VertexOptimizer stop = new VertexOptimizer();
+                //stop.SetBitsToString(BruteForceBits.BitsToString());
+                //stop.Eval();
+                //double targetFitness = stop.Fitness;
+                
                 EvoOptimizerProgram<VertexOptimizer> P = new EvoOptimizerProgram<VertexOptimizer>();
-                P.MaxGen = 5*i;
+                P.MaxGen = 50;
                 P.MultiThread = true;
                 P.Noload = true;
                 P.OutputBaseline = false;
                 P.PopSize = 100;
                 P.SuppressMessages = true;
                 P.SaveAfterGens = 25;
+                //P.StopCondition = targetFitness;
+                //P.HasStopCondition = true;
                 P.ConfigureEvolver();
                 sw.Start();
                 P.Run();
