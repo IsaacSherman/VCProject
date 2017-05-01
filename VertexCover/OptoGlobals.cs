@@ -179,7 +179,7 @@ return working;
 
         static public BitArray ParallelBruteForce(int start = 1)
         {
-            int chunksize = 40;
+            int chunksize = 400;
             WeirdCounter w = new WeirdCounter(n);
             BitArray ret = null;
             bool found = false;
@@ -194,33 +194,26 @@ return working;
                         List<Thread> threadPool = new List<Thread>();
                         
                        for(int i = 0; w.Good() && i < chunksize; ++i){
-                           threadPool.Add(new Thread(
-                               () =>
-                               {
-                                   BitArray bits, coverage;
-                                   lock (w)
-                                   {
-                                       bits = w.Next();
-                                   }
-                                   if (bits == null) return;
-                                   if(CheckIfCover(bits, out coverage))
-                                   {
-                                       lock (solutionStuff)
-                                       {
-                                           solutionStuff[0] = bits;
-                                           solutionStuff[1] = (Object)true;
-                                       }
-
-                                   }
-                               }));
+                           makeThread(w, threadPool);
                        }
                        foreach (Thread t in threadPool)    t.Start();
-                       while ((bool)solutionStuff[1] && threadPool.Any(t => t.IsAlive)) Thread.Sleep(100);
-                    if ((bool)solutionStuff[1])
-                    {
-                        foreach (Thread t in threadPool) t.Abort();
-                        return (BitArray)solutionStuff[0];
-                    }
+                       while (!(bool)solutionStuff[1] && threadPool.Any(t => t.IsAlive))
+                       {
+                           for (int i = threadPool.Count-1; i > -1; --i)
+                           {
+                               if (!threadPool[i].IsAlive) threadPool.RemoveAt(i);
+                           }
+                        }
+                       for (int i = threadPool.Count; i < chunksize; ++i)
+                       {
+                           makeThread(w, threadPool);
+                           threadPool[i].Start();
+                       }
+                           if ((bool)solutionStuff[1])
+                           {
+                               foreach (Thread t in threadPool) t.Abort();
+                               return (BitArray)solutionStuff[0];
+                           }
 
 
             
@@ -233,6 +226,29 @@ return working;
                 return ret;
 
             
+        }
+
+        private static void makeThread(WeirdCounter w, List<Thread> threadPool)
+        {
+            threadPool.Add(new Thread(
+                                           () =>
+                                           {
+                                               BitArray bits, coverage;
+                                               lock (w)
+                                               {
+                                                   bits = w.Next();
+                                               }
+                                               if (bits == null) return;
+                                               if (CheckIfCover(bits, out coverage))
+                                               {
+                                                   lock (solutionStuff)
+                                                   {
+                                                       solutionStuff[0] = bits;
+                                                       solutionStuff[1] = (Object)true;
+                                                   }
+
+                                               }
+                                           }));
         }
 
         private static List<HashSet<int>> initSets(int len, List<HashSet<int>> start, List<HashSet<int>> sets)
